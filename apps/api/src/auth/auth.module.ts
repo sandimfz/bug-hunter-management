@@ -1,0 +1,24 @@
+import { Module } from "@nestjs/common"
+import { JwtModule } from "@nestjs/jwt"
+import { PassportModule } from "@nestjs/passport"
+import { AuthController } from "./auth.controller"
+import { AuthService } from "./auth.service"
+import { JwtStrategy } from "./strategies/jwt.strategy"
+import { UsersModule } from "../users/users.module"
+import { WorkspacesModule } from "../workspaces/workspaces.module"
+
+@Module({
+  imports: [
+    UsersModule,
+    WorkspacesModule,
+    PassportModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET ?? "bughunter-dev-secret-change-in-prod",
+      signOptions: { expiresIn: "7d" },
+    }),
+  ],
+  controllers: [AuthController],
+  providers: [AuthService, JwtStrategy],
+  exports: [AuthService],
+})
+export class AuthModule {}
